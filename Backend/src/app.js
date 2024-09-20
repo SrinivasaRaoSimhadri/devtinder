@@ -1,25 +1,38 @@
 const express = require("express");
 const { adminAuth, userAuth } = require("./middlewares/auth");
+const ConnectDB  = require("./config/database");
+const User = require("./models/user");
 
 const app = express();
 
-app.use("/admin", adminAuth);
+app.post("/signup", async (req, res) => {
+    
+    const user = User({
+        firstName: "Srinu",
+        lastName: "simhadri",
+        emailId: "srinu@gmail.com",
+        password: "srinu@123",
+        age: 20,
+        gender: "male",
+    })
 
-app.use("/users/login", (req, res, next)=>{
-    res.send("logging the user");
-})
-app.use("/users", userAuth, (req, res, next) => {
-    res.send("responce from users")
+    try {
+        await user.save();
+        res.send("User created successfully!");
+    } catch (error) {
+        res.status(400).send("An error occured!" + error.message);
+    }
+
 })
 
-app.get("/admin/get-all-users", (req, res, next) => {
-    res.send("getting all users data");
-})
-
-app.post("/admin/post-user", (req, res, next) => {
-    res.send("posting the user data");
-})
-
-app.listen(3000, ()=> {
-    console.log("The server is running at port 3000 successfully")
-});
+const Start = async () => {
+    try {
+        await ConnectDB();
+        app.listen(3000, ()=> {
+            console.log("The server is running at port 3000 successfully!")
+        });
+    }catch(error) {
+        console.log(error);
+    }
+} 
+Start();
