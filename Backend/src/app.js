@@ -1,23 +1,23 @@
 const express = require("express");
+const { adminAuth, userAuth } = require("./middlewares/auth");
 
 const app = express();
 
-app.use("/", (req, res, next)=>{
-    // res.send("this is a response 1");
-    console.log("1");
-    next();
+app.use("/admin", adminAuth);
+
+app.use("/users/login", (req, res, next)=>{
+    res.send("logging the user");
+})
+app.use("/users", userAuth, (req, res, next) => {
+    res.send("responce from users")
 })
 
-app.get("/user", (req, res, next) => {
-    console.log("2");
-    next();
-},
-(req, res, next) => {
-    console.log("3");
-    next();
-},
-(req, res, next) => {
-    res.send("this is a reponse 2");
+app.get("/admin/get-all-users", (req, res, next) => {
+    res.send("getting all users data");
+})
+
+app.post("/admin/post-user", (req, res, next) => {
+    res.send("posting the user data");
 })
 
 app.listen(3000, ()=> {
