@@ -1,29 +1,29 @@
 const express = require("express");
-const { adminAuth, userAuth } = require("./middlewares/auth");
 const ConnectDB  = require("./config/database");
-const User = require("./models/user");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
+
 
 const app = express();
+app.use(express.json());
+app.use(cookieParser());
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}));
 
-app.post("/signup", async (req, res) => {
-    
-    const user = User({
-        firstName: "Srinu",
-        lastName: "simhadri",
-        emailId: "srinu@gmail.com",
-        password: "srinu@123",
-        age: 20,
-        gender: "male",
-    })
 
-    try {
-        await user.save();
-        res.send("User created successfully!");
-    } catch (error) {
-        res.status(400).send("An error occured!" + error.message);
-    }
+const authRouter = require("./routes/auth");
+const profileRouter = require("./routes/profile");
+const requestRouter = require("./routes/request");
+const userRouter = require("./routes/user");
 
-})
+
+app.use("/", authRouter);
+app.use("/", profileRouter);
+app.use("/", requestRouter);
+app.use("/", userRouter);
+
 
 const Start = async () => {
     try {
@@ -34,5 +34,5 @@ const Start = async () => {
     }catch(error) {
         console.log(error);
     }
-} 
+}
 Start();
